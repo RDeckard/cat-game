@@ -5,6 +5,7 @@ require "lib/tools/prompt.rb"
 require "lib/tools/menu.rb"
 require "lib/tools/text_box.rb"
 require "app/scenes/title_screen.rb"
+require "app/scenes/cat_game.rb"
 
 def tick(args)
   args.state.current_scene ||= TitleScreen.new

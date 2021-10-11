@@ -6,7 +6,7 @@ class TitleScreen < GTKObject
   def tick
     render
 
-    next_scene if inputs.keyboard.key_down.enter
+    next_scene if inputs.keyboard.key_down.enter || inputs.mouse.click
   end
 
   def render
@@ -14,9 +14,14 @@ class TitleScreen < GTKObject
 
     outputs.static_primitives.clear
 
-    outputs.static_primitives << {
-      path: "assets/images/mouse.png"
-    }.sprite!(geometry.center_inside_rect({w: 128, h: 128}, grid))
+    box = @text_box.primitives.first.dup
+
+    scale = box.h/504
+    sprite_width = 599*scale
+
+    outputs.static_primitives << box.sprite!(
+      { x: box.x + (box.w - sprite_width)/2, w: sprite_width, path: "assets/images/mouse.png" }
+    )
 
     outputs.static_primitives << @text_box.primitives
 
@@ -38,7 +43,7 @@ class TitleScreen < GTKObject
       }.label!,
       {
         x: grid.right.shift_left(5), y: grid.bottom.shift_up(25),
-        text: "ENTER: Start",
+        text: "Click/ENTER: Start",
         size_enum: 2,
         alignment_enum: 2
       }.label!
@@ -60,6 +65,7 @@ class TitleScreen < GTKObject
 
   def next_scene
     outputs.static_primitives.clear
+    gtk.hide_cursor
 
     state.current_scene = CatGame.new
   end
