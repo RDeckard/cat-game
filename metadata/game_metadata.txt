@@ -1,0 +1,7 @@
+devid=rdeckard
+devtitle=Rick Deckard
+gameid=cat-game
+gametitle=CatGame
+version=0.1
+icon=assets/images/mouse.png
+compile_ruby=true
