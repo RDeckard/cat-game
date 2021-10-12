@@ -1,11 +1,18 @@
 class CatGame < GTKObject
+  FLOOR_IMAGE  = "assets/images/floor.png".freeze
   MOUSE_IMAGE  = "assets/images/mouse.png".freeze
   MOUSE_SCALE  = 0.2
   MOUSE_WIDTH  = 599*MOUSE_SCALE
   MOUSE_HEIGHT = 504*MOUSE_SCALE
 
+  def initialize
+    @mouse = geometry.center_inside_rect({ w: MOUSE_WIDTH, h: MOUSE_HEIGHT, path: MOUSE_IMAGE }, grid).sprite!
+  end
+
   def tick
     @angle ||= 0
+
+    render
 
     current_point = inputs.mouse.point.to_hash
 
@@ -25,13 +32,21 @@ class CatGame < GTKObject
       @angle = 180
     end
 
-    outputs.primitives << {
+    @mouse.merge!(
       x: current_point.x - MOUSE_WIDTH/2,
       y: current_point.y - MOUSE_HEIGHT/2,
-      w: MOUSE_WIDTH, h: MOUSE_HEIGHT,
-      angle: @angle,   path: MOUSE_IMAGE
-     }.sprite!
+      angle: @angle
+    )
 
     @last_point = current_point if @last_point.nil? || geometry.distance(current_point, @last_point) >= 150
+  end
+
+  def render
+    return if @render
+
+    outputs.static_primitives << { path: FLOOR_IMAGE }.merge(grid.rect.to_hash).sprite!
+    outputs.static_primitives << @mouse
+
+    @render = true
   end
 end
