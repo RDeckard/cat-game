@@ -1,12 +1,44 @@
 class TitleScreen < GTKObject
+  FLOOR_IMAGE  = "assets/images/floor.png".freeze
+
+  MOUSE_IMAGE  = "assets/images/mouse.png".freeze
+  MOUSE_WIDTH  = 599
+  MOUSE_HEIGHT = 504
+  MOUSE_SCALE_MIN   = 0.1
+  MOUSE_SCALE_MAX   = 0.5
+  DEFAULT_MOUSE_SCALE = 0.3
+
   def initialize
-    @text_box = TextBox.new(text_lines, text_alignment: :center)
+    @floor = { path: FLOOR_IMAGE }.merge(grid.rect.to_hash).sprite!
+
+    @text_box = TextBox.new(text_lines, box_alignment_v: grid.top.shift_down(grid.h/3), text_alignment: :center)
+
+    @slider = Slider.new(x: 0, y: grid.bottom.shift_up(grid.h/6), w: grid.w/3, h: 40,
+                         min_value: MOUSE_SCALE_MIN, max_value: MOUSE_SCALE_MAX)
+    @slider.x = geometry.center_inside_rect_x(@slider.bar, grid.rect).x
+
+    @mouse_space = { x: grid.left, y: @slider.slide.top, w: grid.right, h: @text_box.box.bottom - @slider.slide.top }
+    @mouse = {
+      path: MOUSE_IMAGE,
+      w: MOUSE_WIDTH*DEFAULT_MOUSE_SCALE, h: MOUSE_HEIGHT*DEFAULT_MOUSE_SCALE
+    }.sprite!
+    @mouse.merge!(geometry.center_inside_rect(@mouse, @mouse_space))
   end
 
   def tick
     render
 
-    next_scene if inputs.keyboard.key_down.enter || inputs.mouse.click
+    handler_inputs
+
+    next_scene if inputs.keyboard.key_down.enter
+  end
+
+  def handler_inputs
+    @slider.handler_inputs do |mouse_scale|
+      @mouse.w = MOUSE_WIDTH*mouse_scale
+      @mouse.h = MOUSE_HEIGHT*mouse_scale
+      @mouse.merge!(geometry.center_inside_rect(@mouse, @mouse_space))
+    end
   end
 
   def render
@@ -14,17 +46,9 @@ class TitleScreen < GTKObject
 
     outputs.static_primitives.clear
 
-    box = @text_box.primitives.first.dup
+    outputs.static_primitives << [@floor, @text_box.primitives, @slider.primitives, @mouse]
 
-    scale = box.h/504
-    sprite_width = 599*scale
-
-    outputs.static_primitives << box.sprite!(
-      { x: box.x + (box.w - sprite_width)/2, w: sprite_width, path: "assets/images/mouse.png" }
-    )
-
-    outputs.static_primitives << @text_box.primitives
-
+    # Legendes
     outputs.static_primitives << [
       {
         x: grid.left.shift_right(5), y: grid.bottom.shift_up(65),
@@ -43,7 +67,7 @@ class TitleScreen < GTKObject
       }.label!,
       {
         x: grid.right.shift_left(5), y: grid.bottom.shift_up(25),
-        text: "Click/ENTER: Start",
+        text: "ENTER: Start",
         size_enum: 2,
         alignment_enum: 2
       }.label!
@@ -65,8 +89,6 @@ class TitleScreen < GTKObject
 
   def next_scene
     outputs.static_primitives.clear
-    gtk.hide_cursor
-
-    state.current_scene = CatGame.new
+    state.current_scene = CatGame.new(@floor, @mouse)
   end
 end
