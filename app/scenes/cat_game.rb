@@ -1,4 +1,4 @@
-class CatGame < GTKObject
+class CatGame < RDDR::GTKObject
   def initialize(floor, mouse)
     @floor = floor
     @mouse = mouse

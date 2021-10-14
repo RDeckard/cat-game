@@ -1,4 +1,4 @@
-class TitleScreen < GTKObject
+class TitleScreen < RDDR::GTKObject
   FLOOR_IMAGE  = "assets/images/floor.png".freeze
 
   MOUSE_IMAGE  = "assets/images/mouse.png".freeze
@@ -11,10 +11,11 @@ class TitleScreen < GTKObject
   def initialize
     @floor = { path: FLOOR_IMAGE }.merge(grid.rect.to_hash).sprite!
 
-    @text_box = TextBox.new(text_lines, box_alignment_v: grid.top.shift_down(grid.h/3), text_alignment: :center)
+    @text_box = RDDR::TextBox.new(text_lines, box_alignment_v: grid.top.shift_down(grid.h/3), text_alignment: :center)
 
-    @slider = Slider.new(x: 0, y: grid.bottom.shift_up(grid.h/6), w: grid.w/3, h: 40,
-                         min_value: MOUSE_SCALE_MIN, max_value: MOUSE_SCALE_MAX)
+    @slider = RDDR::Slider.new(x: 0, y: grid.bottom.shift_up(grid.h/6), w: grid.w/3, h: 40,
+                         min_value: MOUSE_SCALE_MIN, max_value: MOUSE_SCALE_MAX,
+                         text: "Mouse size", text_size: 4)
     @slider.x = geometry.center_inside_rect_x(@slider.bar, grid.rect).x
 
     @mouse_space = { x: grid.left, y: @slider.slide.top, w: grid.right, h: @text_box.box.bottom - @slider.slide.top }
@@ -57,7 +58,7 @@ class TitleScreen < GTKObject
       }.label!,
       {
         x: grid.left.shift_right(5), y: grid.bottom.shift_up(45),
-        text: "GitHub: https://github.com/RDeckard/cat_game/",
+        text: "GitHub: https://github.com/RDeckard/cat-game/",
         r: 128, g: 128, b: 128
       }.label!,
       {
