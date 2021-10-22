@@ -1,6 +1,6 @@
 # Cat Game
 
-![Screenshot from 2021-10-12 11-59-53](https://user-images.githubusercontent.com/5458964/136964699-fce715df-4d18-4e14-8787-76081aa7768a.jpg)
+![Screenshot from 2021-10-14 13-36-53](https://user-images.githubusercontent.com/5458964/137312049-3c5a66fc-1d6e-426e-9cff-26b35c290425.jpg)
 
 This is a DragonRuby Game Toolkit project that must be in a sub directory (e.g. `projects/`) of a directory where a DragonRuby binaries stands to be run in development environment.
 
