@@ -14,7 +14,7 @@ class CatGame < RDDR::GTKObject
     current_point = inputs.mouse.point.to_hash
 
     if @last_point && inputs.mouse.moved
-      @angle = geometry.angle_to(@last_point, current_point)
+      @angle = Geometry.angle_to(@last_point, current_point)
     end
 
     if current_point.y < grid.bottom.shift_up(@mouse.w/2)
@@ -35,7 +35,7 @@ class CatGame < RDDR::GTKObject
       angle: @angle
     )
 
-    @last_point = current_point if @last_point.nil? || geometry.distance(current_point, @last_point) >= 150
+    @last_point = current_point if @last_point.nil? || Geometry.distance(current_point, @last_point) >= 150
   end
 
   private

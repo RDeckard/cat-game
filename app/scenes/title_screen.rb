@@ -11,34 +11,34 @@ class TitleScreen < RDDR::GTKObject
   def initialize
     @floor = { path: FLOOR_IMAGE }.merge(grid.rect.to_hash).sprite!
 
-    @text_box = RDDR::TextBox.new(text_lines, frame_alignment_v: grid.top.shift_down(grid.h/3), text_alignment: :center)
+    @text_box = RDDR::TextBox.new(text_lines, box_alignment_v: grid.top.shift_down(grid.h/3), text_alignment: :center)
 
     @slider = RDDR::Slider.new(x: 0, y: grid.bottom.shift_up(grid.h/6), w: grid.w/3, h: 40,
                          min_value: MOUSE_SCALE_MIN, max_value: MOUSE_SCALE_MAX,
                          text: "Mouse size", text_size: 4)
-    @slider.x = geometry.center_inside_rect_x(@slider.bar, grid.rect).x
+    @slider.x = Geometry.center_inside_rect_x(@slider.bar, grid.rect).x
 
-    @mouse_space = { x: grid.left, y: @slider.slide.top, w: grid.right, h: @text_box.frame.bottom - @slider.slide.top }
+    @mouse_space = { x: grid.left, y: @slider.slide.top, w: grid.right, h: @text_box.rect.bottom - @slider.slide.top }
     @mouse = {
       path: MOUSE_IMAGE,
       w: MOUSE_WIDTH*DEFAULT_MOUSE_SCALE, h: MOUSE_HEIGHT*DEFAULT_MOUSE_SCALE
     }.sprite!
-    @mouse.merge!(geometry.center_inside_rect(@mouse, @mouse_space))
+    @mouse.merge!(Geometry.center_inside_rect(@mouse, @mouse_space))
   end
 
   def tick
     render
 
-    handler_inputs
+    handle_inputs
 
     next_scene if inputs.keyboard.key_down.enter
   end
 
-  def handler_inputs
-    @slider.handler_inputs do |mouse_scale|
+  def handle_inputs
+    @slider.handle_inputs do |mouse_scale|
       @mouse.w = MOUSE_WIDTH*mouse_scale
       @mouse.h = MOUSE_HEIGHT*mouse_scale
-      @mouse.merge!(geometry.center_inside_rect(@mouse, @mouse_space))
+      @mouse.merge!(Geometry.center_inside_rect(@mouse, @mouse_space))
     end
   end
 
